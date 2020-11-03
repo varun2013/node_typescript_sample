@@ -8,27 +8,27 @@ import * as express from "express";
 var router = express.Router();
 
 //options for cors midddleware
-const options: cors.CorsOptions = {
-  allowedHeaders: [
-    'Origin',
-    'X-Requested-With',
-    'Content-Type',
-    'Accept',
-    'X-Access-Token',
-  ],
-  // credentials: true,
-  // methods: 'GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE',
-  // origin: API_URL,
-  // preflightContinue: false,
-};
+// const options: cors.CorsOptions = {
+//   allowedHeaders: [
+//     'Origin',
+//     'X-Requested-With',
+//     'Content-Type',
+//     'Accept',
+//     'X-Access-Token',
+//   ],
+//   // credentials: true,
+//   // methods: 'GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE',
+//   // origin: API_URL,
+//   // preflightContinue: false,
+// };
 
 //use cors middleware
-router.use(cors(options));
+router.use(cors());
 
 //add your routes
 
 //enable pre-flight
-router.options('*', cors(options));
+router.options('*', cors());
 
 const PORT = env.getPort();
 
