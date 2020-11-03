@@ -1,6 +1,7 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as mongoose from 'mongoose';
+import * as cors from 'cors';
 import environment from "../environment";
 import { AuthRoutes } from "../routes/user_routes";
 import { CommonRoutes } from "../routes/common_routes";
@@ -27,6 +28,8 @@ class App {
       this.app.use(bodyParser.json());
       //support application/x-www-form-urlencoded post data
       this.app.use(bodyParser.urlencoded({ extended: false }));
+      this.app.use(cors());
+
    }
 
    private mongoSetup(): void {
