@@ -8,7 +8,8 @@ import { CommonRoutes } from "../routes/common_routes";
 class App {
 
    public app: express.Application;
-   public mongoUrl: string = 'mongodb://localhost/' + environment.getDBName();
+   public mongoUrl: string = 'mongodb+srv://varun18june:123@Varun@demo.2flop.mongodb.net/demo?retryWrites=true&w=majority';
+   //mongodb+srv://varun18june:123@Varun@demo.2flop.mongodb.net/demo?retryWrites=true&w=majority
 
    private auth_routes: AuthRoutes = new AuthRoutes();
    private common_routes: CommonRoutes = new CommonRoutes();
