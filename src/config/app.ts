@@ -6,6 +6,21 @@ import environment from "../environment";
 import { AuthRoutes } from "../routes/user_routes";
 import { CommonRoutes } from "../routes/common_routes";
 
+//options for cors midddleware
+const options: cors.CorsOptions = {
+  allowedHeaders: [
+    'Origin',
+    'X-Requested-With',
+    'Content-Type',
+    'Accept',
+    'X-Access-Token',
+  ],
+  credentials: true,
+  methods: 'GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE',
+  origin: "http://localhost:4200",
+  preflightContinue: false,
+};
+
 class App {
 
    public app: express.Application;
@@ -28,8 +43,7 @@ class App {
       this.app.use(bodyParser.json());
       //support application/x-www-form-urlencoded post data
       this.app.use(bodyParser.urlencoded({ extended: false }));
-      this.app.use(cors());
-
+      this.app.use(cors(options));
    }
 
    private mongoSetup(): void {
