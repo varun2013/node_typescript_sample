@@ -21,7 +21,8 @@ export class UserController {
             };
             this.user_service.createUser(user_params, (err: any, user_data: IUser) => {
                 if (err) {
-                    mongoError(err, res);
+
+                    failureResponse("Email already exist", null, res);
                 } else {
                     successResponse('create user successfully', user_data, res);
                 }
