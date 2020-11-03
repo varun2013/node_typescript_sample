@@ -43,21 +43,19 @@ export class UserController {
                 } else {
                   if (!user_data) {
                     failureResponse("No record found for this email", null, res);
+                  }else{
+                    let resetToken = Math.random().toString(20).substr(2, 6);
+
+                    user_data['resetPasswordToken'] = resetToken;
+                    this.user_service.updateUser(user_data, (err: any, user_data_1: IUser) => {
+                      if (err) {
+                          mongoError(err, res);
+                      }else{
+                        successResponse('Forgot password requested', {token: resetToken}, res);
+
+                      }
+                    });
                   }
-                  let resetToken = Math.random().toString(20).substr(2, 6);
-
-                  user_data['resetPasswordToken'] = resetToken;
-                  this.user_service.updateUser(user_data, (err: any, user_data_1: IUser) => {
-                    if (err) {
-                        mongoError(err, res);
-                    }else{
-                      successResponse('Forgot password requested', {token: resetToken}, res);
-
-                    }
-                  });
-
-
-
                 }
             });
         } else {
