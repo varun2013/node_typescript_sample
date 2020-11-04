@@ -3,10 +3,13 @@ import { insufficientParameters, mongoError, successResponse, failureResponse, h
 import { IUser } from '../modules/users/model';
 import UserService from '../modules/users/service';
 import e = require('express');
+import MailService from '../modules/common/mail';
+import environment from "../environment";
 
 export class UserController {
 
     private user_service: UserService = new UserService();
+    private mail_service: MailService = new MailService();
 
     public async signup_user(req: Request, res: Response) {
         // this check whether all the filds were send through the erquest or not
@@ -24,7 +27,11 @@ export class UserController {
 
                     failureResponse("Email already exist", null, res);
                 } else {
-                    successResponse('create user successfully', user_data, res);
+                  this.mail_service.sendMail(
+                    req.body.email,
+                    'Welcome Email',
+                    'Hey Welcome User');
+                    successResponse('create user successfully', null, res);
                 }
             });
         } else {
@@ -51,6 +58,10 @@ export class UserController {
                       if (err) {
                           mongoError(err, res);
                       }else{
+                        this.mail_service.sendMail(
+                          req.body.email,
+                          'Reset Password Email',
+                          'Click here to reset your password '+ environment.getAppUrl()+"/reset-password/"+resetToken);
                         successResponse('Forgot password requested', {token: resetToken}, res);
 
                       }
@@ -113,7 +124,7 @@ export class UserController {
                       if (err) {
                           mongoError(err, res);
                       }else{
-                        successResponse('Password Updated Success', user_data_1, res);
+                        successResponse('Password Updated Success', null, res);
 
                       }
                     });
