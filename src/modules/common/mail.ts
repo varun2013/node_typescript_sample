@@ -18,7 +18,7 @@ export default class MailService {
   }
   sendMail(to: string, subject: string, content: string) {
     let options = {
-      from: 'azizkanwal10@gmail.com',
+      from: 'talent.testing.13@gmail.com',
       to: to,
       subject: subject,
       text: content
