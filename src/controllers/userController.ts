@@ -5,6 +5,8 @@ import UserService from '../modules/users/service';
 import e = require('express');
 import MailService from '../modules/common/mail';
 import environment from "../environment";
+import * as jwt from "jsonwebtoken";
+
 
 export class UserController {
 
@@ -44,28 +46,25 @@ export class UserController {
         // this check whether all the filds were send through the erquest or not
         if (req.body.email) {
              const user_filter = { email: req.body.email };
-            this.user_service.filterUser(user_filter, (err: any, user_data: IUser) => {
+            this.user_service.filterUser(user_filter, async (err: any, user_data: IUser) => {
                 if (err) {
                     mongoError(err, res);
                 } else {
                   if (!user_data) {
                     failureResponse("No record found for this email", null, res);
                   }else{
-                    let resetToken = Math.random().toString(20).substr(2, 6);
 
-                    user_data['resetPasswordToken'] = resetToken;
-                    this.user_service.updateUser(user_data, (err: any, user_data_1: IUser) => {
-                      if (err) {
-                          mongoError(err, res);
-                      }else{
+                    const jwtSecret = ""+ environment.getJwtToken();
+                    const token = jwt.sign(
+                      { resetPasswordUser: user_data.email },
+                      jwtSecret,
+                      { expiresIn: "600000" }
+                    );
                         this.mail_service.sendMail(
                           req.body.email,
                           'Reset Password Email',
-                          'Click here to reset your password '+ environment.getAppUrl()+"/reset-password/"+resetToken);
-                        successResponse('Forgot password requested', {token: resetToken}, res);
-
-                      }
-                    });
+                          'Click here to reset your password '+ environment.getAppUrl()+"/reset-password/"+token);
+                        successResponse('Forgot password requested', {token}, res);
                   }
                 }
             });
@@ -89,9 +88,16 @@ export class UserController {
                     if (!matchedPassword) {
                       failureResponse("Password not matched", null, res);
                     }else{
-                      successResponse("Login SUCCESS", user_data, res);
+                      //Sing JWT, valid for 1 hour
+                      const jwtSecret = ""+ environment.getJwtToken();
+                      const token = jwt.sign(
+                        { userId: user_data.email, username: user_data.email },
+                        jwtSecret,
+                        { expiresIn: "1h" }
+                      );
+                      successResponse("Login SUCCESS", {token}, res);
                     }
-
+                  //
                   }else{
                     failureResponse('Error in Login', null, res);
                   }
@@ -110,28 +116,40 @@ export class UserController {
           if (req.body.password !== req.body.confirm_password) {
              failureResponse("Password doesn't match", null, res);
           }else{
-            const user_filter = { resetPasswordToken: req.params.token };
-            this.user_service.filterUser(user_filter, async (err: any, user_data: IUser) => {
-                if (err) {
-                    mongoError(err, res);
-                } else {
-                  if (!user_data) {
-                    failureResponse('No data found for this token ', null, res);
-                  }else{
-                    let hash_password = await hashPassword(req.body.password);
-                    user_data['password'] = hash_password;
-                    this.user_service.updateUser(user_data, (err: any, user_data_1: IUser) => {
-                      if (err) {
-                          mongoError(err, res);
-                      }else{
-                        successResponse('Password Updated Success', null, res);
+            const jwtSecret = ""+ environment.getJwtToken();
 
-                      }
-                    });
-                  }
+            //sync
+            try {
+             const decoded: any = jwt.verify(req.params.token, jwtSecret);
+             const user_filter = {email: decoded.resetPasswordUser};
 
-                }
-            });
+             this.user_service.filterUser(user_filter, async (err: any, user_data: IUser) => {
+                 if (err) {
+                     mongoError(err, res);
+                 } else {
+                   if (!user_data) {
+                     failureResponse('No data found for this token ', null, res);
+                   }else{
+                     let hash_password = await hashPassword(req.body.password);
+                     user_data['password'] = hash_password;
+                     this.user_service.updateUser(user_data, (err: any, user_data_1: IUser) => {
+                       if (err) {
+                           mongoError(err, res);
+                       }else{
+                         successResponse('Password Updated Success', null, res);
+
+                       }
+                     });
+                   }
+
+                 }
+             });
+            }
+            catch (ex) {
+               failureResponse("Error in Token", ex, res);
+             }
+
+
           }
 
         } else {

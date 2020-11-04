@@ -28,6 +28,10 @@ class Environment {
     getMailPassword(): String {
       return "Talentelgia!@#";
     }
+
+    getJwtToken(): String {
+      return "ewe3r33r3434rt";
+    }
 }
 
 export default new Environment(Environments.local_environment);
