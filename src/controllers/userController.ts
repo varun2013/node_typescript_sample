@@ -95,7 +95,7 @@ export class UserController {
                         jwtSecret,
                         { expiresIn: "1h" }
                       );
-                      successResponse("Login SUCCESS", {token}, res);
+                      successResponse("Login SUCCESS", {token,user_data}, res);
                     }
                   //
                   }else{
