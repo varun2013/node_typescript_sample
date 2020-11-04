@@ -25,9 +25,11 @@ body_params: email
 body_params: password,confirm_password
 
 #Mail configuration
+
 /src/modules/common/mail.ts
 
 #enviroment variables
+
 /src/enviroment.ts
 
 
