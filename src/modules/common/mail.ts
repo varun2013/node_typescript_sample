@@ -7,8 +7,8 @@ const smtpConfig = {
     port: 465,
   //  secure: true, // use SSL
     auth: {
-        user: "azizkanwal10@gmail.com",
-        pass: "Talentelgia!@#"
+        user: "talent.testing.13@gmail.com",
+        pass: "Talent@123456"
     }
 };
 export default class MailService {

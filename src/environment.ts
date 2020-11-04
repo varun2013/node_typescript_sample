@@ -18,7 +18,7 @@ class Environment {
     }
 
     getAppUrl(): String {
-      return 'http://localhost:3002';
+      return 'http://localhost:3004';
     }
 
     getMailUserName(): String {
