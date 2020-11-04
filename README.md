@@ -13,15 +13,19 @@
 
 #Rest endpoints
 1. api/register
+
 body_params : email,first_name,last_name,password
 
 2. api/login
+
 body_params: email,password
 
 3. api/forgot_password
+
 body_params: email
 
 4. api/reset_password/{token}
+
 body_params: password,confirm_password
 
 #Mail configuration
